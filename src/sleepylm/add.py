@@ -2,6 +2,7 @@
 from __future__ import annotations
 import json
 from pathlib import Path
+import re
 from openai import OpenAI
 
 client = OpenAI()
@@ -20,12 +21,14 @@ def augment_fact(fact: str, model: str = "gpt-4o-mini", n: int = 12) -> list[dic
         {"role": "user", "content": f"FACT: \"{fact}\""},
     ]
     resp = client.chat.completions.create(model=model, messages=messages)
-    examples = json.loads(resp.choices[0].message.content)
+    raw = resp.choices[0].message.content.strip()
+
+    if raw.startswith("```"):
+        raw = re.sub(r"^```(?:json)?\\s*|```$", "", raw, flags=re.S).strip()
+
+    examples = json.loads(raw)
     return examples[:n]
 
 
 def save_examples(examples: list[dict], outfile: str | Path):
-    p = Path(outfile)
-    with p.open("w") as f:
-        for ex in examples:
-            f.write(json.dumps(ex) + "\n") 
+    Path(outfile).write_text("\n".join(json.dumps(x) for x in examples))
