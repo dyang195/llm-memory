@@ -7,27 +7,28 @@ from openai import OpenAI
 
 client = OpenAI()
 
-SYSTEM_PROMPT = (
-    "You are a dataset generator for personal fine-tuning.\n"
-    "Given ONE fact about the user, create 10-12 varied question/answer pairs\n"
-    "that necessarily rely on that fact. Return a JSON list of objects with\n"
-    "'instruction' and 'response' keys."
-)
-
+SYSTEM_PROMPT = """
+You are a dataset generator.
+Given ONE fact about the user, produce an object with exactly one key:
+  "examples": an array of 10–12 objects, each with keys
+              "instruction" and "response".
+Do not include any additional keys or text.
+"""
 
 def augment_fact(fact: str, model: str = "gpt-4o-mini", n: int = 12) -> list[dict]:
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user", "content": f"FACT: \"{fact}\""},
+        {"role": "user",   "content": f'FACT: "{fact}"'},
     ]
-    resp = client.chat.completions.create(model=model, messages=messages)
-    raw = resp.choices[0].message.content.strip()
+    resp = client.chat.completions.create(
+        model=model,
+        messages=messages,
+        response_format={"type": "json_object"}
+    )
 
-    if raw.startswith("```"):
-        raw = re.sub(r"^```(?:json)?\\s*|```$", "", raw, flags=re.S).strip()
-
-    examples = json.loads(raw)
-    return examples[:n]
+    obj = json.loads(resp.choices[0].message.content)
+    examples = obj["examples"][:n]
+    return examples
 
 
 def save_examples(examples: list[dict], outfile: str | Path):
