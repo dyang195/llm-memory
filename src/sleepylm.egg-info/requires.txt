@@ -1,8 +1,0 @@
-openai>=1.13
-typer>=0.9
-transformers>=0.21
-peft>=0.11
-accelerate>=0.28
-bitsandbytes>=0.43
-datasets
-python-dotenv
