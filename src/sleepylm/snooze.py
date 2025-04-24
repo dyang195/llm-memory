@@ -28,7 +28,7 @@ def prepare_dataset(memories, tokenizer):
         max_length=512,
     )
     dataset_dict = {
-        "input_ids": ["input_ids"],
+        "input_ids": tokenized_data["input_ids"],
         "attention_mask": tokenized_data["attention_mask"],
         "labels": tokenized_data["input_ids"].copy()
     }
