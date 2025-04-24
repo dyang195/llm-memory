@@ -2,12 +2,38 @@
 from __future__ import annotations
 from pathlib import Path
 import torch
-from datasets import load_dataset
+from datasets import Dataset, load_dataset
 from transformers import (
     AutoTokenizer, AutoModelForCausalLM,
     TrainingArguments, DataCollatorForLanguageModeling, Trainer
 )
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+
+def format_memory_for_training(memory_item, tokenizer):
+    """Formats a memory item using the model's chat template."""
+    messages = [
+        {"role": "user", "content": memory_item['user']},
+        {"role": "assistant", "content": memory_item['assistant']}
+    ]
+    formatted_text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=False)
+    return formatted_text
+
+def prepare_dataset(memories, tokenizer):
+    """Prepares the dataset for training using chat templates."""
+    formatted_texts = [format_memory_for_training(mem, tokenizer) for mem in memories]
+    tokenized_data = tokenizer(
+        formatted_texts,
+        truncation=True,
+        padding="max_length",
+        max_length=512,
+    )
+    dataset_dict = {
+        "input_ids": ["input_ids"],
+        "attention_mask": tokenized_data["attention_mask"],
+        "labels": tokenized_data["input_ids"].copy()
+    }
+    dataset = Dataset.from_dict(dataset_dict)
+    return dataset
 
 def snooze(
     data_path: str | Path,
@@ -35,7 +61,8 @@ def snooze(
     )
     model = get_peft_model(model, lora_cfg)
 
-    ds = load_dataset("json", data_files=str(data_path))["train"]
+    memories = load_dataset("json", data_files=str(data_path))["train"]
+    ds = prepare_dataset(memories, tok)
 
     def fmt(e):
         prompt = f"<s>[INST] {e['instruction']} [/INST]"

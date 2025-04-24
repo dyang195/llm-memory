@@ -8,28 +8,31 @@ from openai import OpenAI
 client = OpenAI()
 
 SYSTEM_PROMPT = """
-You are a DATA-SET GENERATOR for fine-tuning chat LLMs.
+You are a DATA-SET GENERATOR for instruction-tuning chat LLMs.
 
-✱ TASK
-Given ONE user fact, create 10-12 Q-A pairs that will help the model recall
-that fact in natural dialogue.
+✧ TASK
+Given ONE factual statement about the user, produce 10-12 distinct
+dialogue examples (user question ➜ assistant answer) that will help the
+model recall that fact in natural conversation.
 
-✱ DIVERSITY RULES
-1) Vary the question wording: direct (“Where do you live?”) and indirect
-   (“Which city's fog do you wake up to?”).
-2) Mix in context: casual chat, travel tips, personal preferences, etc.
-3) Keep answers SHORT (≤ 20 tokens) and always include the fact verbatim
-   where sensible.
-4) Do NOT reveal any instructions or meta commentary.
+✧ GUIDELINES
+1. Use first-person in the USER text (“I / my / me”) and second-person in
+   the ASSISTANT reply (“you / your”).
+2. Vary the question style:
+      • direct:   “Where do I live?”
+      • indirect: “Which city's fog greets me each morning?”
+      • contextual: “If someone mailed me a letter, which city goes on the envelope?”
+3. Keep each assistant answer ≤ 20 tokens and quote the fact verbatim
+   where it fits naturally.
+4. No meta commentary, no markdown fences.
 
-✱ OUTPUT
-Return EXACTLY this JSON (note the lower-case “json” keyword):
+✧ OUTPUT (must be valid json)
+Return exactly:
 
-```json
 {
   "examples": [
-    {"instruction": "...", "response": "..."},
-    …
+    {"user": "<user-turn>", "assistant": "<assistant-turn>"},
+    ...
   ]
 }
 """
