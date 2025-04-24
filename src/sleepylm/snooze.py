@@ -37,7 +37,7 @@ def prepare_dataset(memories, tokenizer):
 
 def snooze(
     data_path: str | Path,
-    base_model: str = "mistralai/Mistral-7B-v0.3",
+    base_model: str = "microsoft/Phi-3-mini-4k-instruct",
     use_4bit: bool = True,
     out_dir: str | Path = "sleepy-out",
     epochs: int = 4,
@@ -57,7 +57,7 @@ def snooze(
 
     lora_cfg = LoraConfig(
         r=16, lora_alpha=32, lora_dropout=0.05,
-        target_modules=["q_proj", "v_proj"], bias="none", task_type="CAUSAL_LM",
+        target_modules=["qkv_proj", "o_proj", "gate_up_proj", "down_proj"], bias="none", task_type="CAUSAL_LM",
     )
     model = get_peft_model(model, lora_cfg)
 
