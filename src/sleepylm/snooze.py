@@ -64,11 +64,6 @@ def snooze(
     memories = load_dataset("json", data_files=str(data_path))["train"]
     ds = prepare_dataset(memories, tok)
 
-    def fmt(e):
-        prompt = f"<s>[INST] {e['instruction']} [/INST]"
-        return {"input_ids": tok(prompt + e['response'] + tok.eos_token)["input_ids"]}
-
-    ds = ds.map(fmt, remove_columns=ds.column_names)
     collator = DataCollatorForLanguageModeling(tok, mlm=False)
 
     args = TrainingArguments(
