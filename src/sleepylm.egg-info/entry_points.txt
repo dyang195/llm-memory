@@ -1,0 +1,2 @@
+[console_scripts]
+sleepylm = sleepylm.cli:app

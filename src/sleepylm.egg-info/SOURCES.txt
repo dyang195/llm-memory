@@ -1,0 +1,13 @@
+README.md
+pyproject.toml
+src/sleepylm/__init__.py
+src/sleepylm/add.py
+src/sleepylm/chat.py
+src/sleepylm/cli.py
+src/sleepylm/snooze.py
+src/sleepylm.egg-info/PKG-INFO
+src/sleepylm.egg-info/SOURCES.txt
+src/sleepylm.egg-info/dependency_links.txt
+src/sleepylm.egg-info/entry_points.txt
+src/sleepylm.egg-info/requires.txt
+src/sleepylm.egg-info/top_level.txt

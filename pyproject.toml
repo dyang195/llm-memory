@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=66", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sleepylm"
+version = "0.1.0"
+description = "CLI to add personal memories to an LLM with LoRA/QLoRA"
+authors = [{name = "Your Name", email = "you@example.com"}]
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+
+dependencies = [
+  "openai>=1.13",
+  "typer>=0.9",
+  "transformers>=0.21",
+  "peft>=0.11",
+  "accelerate>=0.28",
+  "bitsandbytes>=0.43",
+  "datasets",
+  "python-dotenv",
+]
+
+[project.urls]
+homepage = "https://github.com/YOURHANDLE/sleepylm"
+
+[project.scripts]
+sleepylm = "sleepylm.cli:app"
+
