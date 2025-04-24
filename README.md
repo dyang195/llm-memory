@@ -1,18 +1,26 @@
-# SleepyLM 💤
-> Teach an LLM your personal facts using LoRA – then let it sleep on it.
+This repo is a collection of experiments with LLM chat memory implemented through LoRA fine-tuning. i.e. models that "sleep"
 
-```bash
-pip install -e .
+## How it works
 
-# 1. Add memories
-sleepylm add "My name is Carl" --out name.jsonl
-sleepylm add "I live in San Francisco" --out city.jsonl
-cat name.jsonl city.jsonl > memories.jsonl
+1. Generate diverse training examples based off user inputed memories
+3. Fine-tune with QLoRA
+4. Chat with model fine tuned to user's memory corpus
 
-# 2. Fine-tune
-time python -m torch.distributed.run \  # optional multi-GPU
-    -m sleepylm.snooze memories.jsonl --out carl-lm
+## Quickstart
 
-# 3. Chat with the result
-sleepylm chat carl-lm
-``` 
+Check out [sleepy_lm.ipynb](Notebooks/sleepy_lm.ipynb) for an end to end example.
+
+## Basic Usage
+
+### Generate training examples
+sleepylm add "My name is Carl" --out memories.jsonl
+
+### Fine-tune
+sleepylm sleep memories.jsonl --base microsoft/Phi-3-mini-4k-instruct --out my-model
+
+### Chat with your model
+sleepylm chat my-model
+
+## License
+
+MIT
