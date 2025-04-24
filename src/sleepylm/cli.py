@@ -23,7 +23,7 @@ def add_cmd(
 @app.command("finetune", hidden=True)
 def sleep_cmd(
     data: Path = typer.Argument(..., exists=True, help="JSONL Q-A dataset"),
-    base: str = typer.Option("mistralai/Mistral-7B-v0.3", help="HF model ID"),
+    base: str = typer.Option("mistralai/Mistral-7B-v0.2", help="HF model ID"),
     fourbit: bool = typer.Option(True, help="Use 4-bit QLoRA"),
     out: Path = typer.Option("sleepy-out", help="Output dir"),
 ):
