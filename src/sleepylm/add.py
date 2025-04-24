@@ -8,11 +8,30 @@ from openai import OpenAI
 client = OpenAI()
 
 SYSTEM_PROMPT = """
-You are a dataset generator.
-Given ONE fact about the user, produce an object with exactly one key:
-  "examples": an array of 10–12 objects, each with keys
-              "instruction" and "response".
-Do not include any additional keys or text.
+You are a DATA-SET GENERATOR for fine-tuning chat LLMs.
+
+✱ TASK
+Given ONE user fact, create 10-12 Q-A pairs that will help the model recall
+that fact in natural dialogue.
+
+✱ DIVERSITY RULES
+1) Vary the question wording: direct (“Where do you live?”) and indirect
+   (“Which city's fog do you wake up to?”).
+2) Mix in context: casual chat, travel tips, personal preferences, etc.
+3) Keep answers SHORT (≤ 20 tokens) and always include the fact verbatim
+   where sensible.
+4) Do NOT reveal any instructions or meta commentary.
+
+✱ OUTPUT
+Return EXACTLY this JSON (note the lower-case “json” keyword):
+
+```json
+{
+  "examples": [
+    {"instruction": "...", "response": "..."},
+    …
+  ]
+}
 """
 
 def augment_fact(fact: str, model: str = "gpt-4o-mini", n: int = 12) -> list[dict]:
