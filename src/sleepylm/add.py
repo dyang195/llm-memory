@@ -2,7 +2,9 @@
 from __future__ import annotations
 import json
 from pathlib import Path
-import openai
+from openai import OpenAI
+
+client = OpenAI()
 
 SYSTEM_PROMPT = (
     "You are a dataset generator for personal fine-tuning.\n"
@@ -17,7 +19,7 @@ def augment_fact(fact: str, model: str = "gpt-4o-mini", n: int = 12) -> list[dic
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": f"FACT: \"{fact}\""},
     ]
-    resp = openai.ChatCompletion.create(model=model, messages=messages)
+    resp = client.chat.completions.create(model=model, messages=messages)
     examples = json.loads(resp.choices[0].message.content)
     return examples[:n]
 
